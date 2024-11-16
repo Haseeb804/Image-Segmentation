@@ -25,3 +25,7 @@ class UNET(nn.modules):
         self.downs = nn.ModuleList()
         self.pool = nn.MaxPool2d(kernel_size = 2, stride = 2)
         
+        # down part of UNet
+        for featue in features():
+            self.downs.append(DoubleConv(in_channels, features))
+            in_channels = features
