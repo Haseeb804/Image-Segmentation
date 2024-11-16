@@ -41,4 +41,27 @@ class UNET(nn.modules):
 
         self.bottleneck = DoubleConv(features[-1], features[-1]*2)
         self.final_conv = nn.Conv2d(features[0], out_channels, kernel_size = 1)
-     
+
+    def forward(self, x):
+        skip_connection = []
+
+        for down in self.downs:
+            x = down(x)
+            skip_connection.append(x)
+            x = self.pool(x)
+
+        x = self.bottleneck(x)
+        skip_connection = skip_connection[::-1]
+
+
+        for idx in range(0, len(self.ups), ):
+            x = self.ups[idx](x)
+            skip_connection = skip_connection[idx//2]
+
+            if x.shape != skip_connection.shape:
+                x = tf. resize (x, size = skip_connection.shape[2:])
+
+            concat_skip = torch.cat((skip_connection, x), dim = 1)
+            x = self.ups[idx+1](concat_skip)
+
+        return self.final_conv(x) 
