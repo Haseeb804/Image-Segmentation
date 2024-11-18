@@ -32,7 +32,27 @@ VAL_MASK_DIR = "data/val_masks/"
 
 #def to train model with these parameters
 def train_fn (loader, model, optimizer, loss_fn, scalar):
-    pass
+    loop = tqdm(loader)
+
+    for batch_idx, (data, targets) in enumerate(loop):
+        data = data.to(device = DEVICE )
+        targets = targets.float().unsequeez(1).to(device = DEVICE)
+
+        #forward 
+        with torch.cudo.amp.autocast():
+            predictions = model(data)
+            loss = loss_fn(predictions, targets)
+
+        #backward
+        optimizer.zero_grad()
+        scalar.scale(loss).backward()
+        scalar.step(optimizer)
+        scalar.update(
+
+        #update the tqmd loop 
+        loss.set_postfix(loss = loss.item())
+        
+        )
 
 def main():
     pass

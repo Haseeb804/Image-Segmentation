@@ -66,7 +66,7 @@ class UNET(nn.Module):  # Use nn.Module
 
 # Testing the model
 def test():
-    x = torch.randn((1, 1, 161, 161))  # Batch size = 1, Channels = 1, Height & Width = 160
+    x = torch.randn((1, 1, 161, 161))  # Batch size = 1, Channels = 1, Height & Width = 161
     model = UNET(in_channels=1, out_channels=1)
     preds = model(x)
    # print(preds.shape)  # Expected output shape: (1, 1, 160, 160)
